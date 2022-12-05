@@ -160,6 +160,8 @@ namespace HIPC_Compiler
 
                 string line = badLine.Trim();
 
+                if (line.Length == 0) continue;
+
                 string opcode = line.Split(',')[0];
 
                 string[] operands = new string[line.Split(',').Length - 1];
@@ -222,6 +224,8 @@ namespace HIPC_Compiler
                     case "OOR": linesToAdd = Compile61(operands); break;
                     case "XOR": linesToAdd = Compile62(operands); break;
                     case "NOT": linesToAdd = Compile63(operands); break;
+                    case "LSL": linesToAdd = Compile64(operands); break;
+                    case "LSR": linesToAdd = Compile65(operands); break;
 
                 }
 
@@ -423,6 +427,22 @@ namespace HIPC_Compiler
         {
 
             return new string[] { "01100011", "0000" + ToBinary(opcodes[0], 4) };
+
+        }
+
+        //LSL
+        static string[] Compile64(string[] opcodes)
+        {
+
+            return new string[] { "01100100", "0000" + ToBinary(opcodes[0], 4) };
+
+        }
+
+        //LSR
+        static string[] Compile65(string[] opcodes)
+        {
+
+            return new string[] { "01100101", "0000" + ToBinary(opcodes[0], 4) };
 
         }
 
