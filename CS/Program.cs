@@ -175,19 +175,49 @@ namespace HIPC_Compiler
 
                 string[] linesToAdd = new string[0];
 
-                //these are comments and will be ignored
-
-                //we will have to do a second pass for the jump instructions, so for now we will just write a marker and some spacers
+                //we will have to do a second pass for the jump instructions, so for now we will just write the opcode, spacer and the label
                 if (opcode == "JMP")
                 {
 
-                    compiled.Add("JUMPTO");
+                    compiled.Add("00000010");
+                    compiled.Add("JUMP");
                     compiled.Add(operands[0]);
-                    compiled.Add("SPACER");
+
+                }
+                else if (opcode == "JEQ")
+                {
+
+                    compiled.Add("01000001");
+                    compiled.Add("JUMP");
+                    compiled.Add(operands[0]);
+
+                }
+                else if (opcode == "JLT")
+                {
+
+                    compiled.Add("01000010");
+                    compiled.Add("JUMP");
+                    compiled.Add(operands[0]);
+
+                }
+                else if (opcode == "JMT")
+                {
+
+                    compiled.Add("01000011");
+                    compiled.Add("JUMP");
+                    compiled.Add(operands[0]);
+
+                }
+                else if (opcode == "JNE")
+                {
+
+                    compiled.Add("01000100");
+                    compiled.Add("JUMP");
+                    compiled.Add(operands[0]);
 
                 }
 
-                //this is for jump destinations, we will store the address of the instrution to jump to here
+                //this is for jump destinations, we will store the address of the instruction to jump to here
                 if (line[0] == ':')
                 {
 
@@ -201,6 +231,7 @@ namespace HIPC_Compiler
 
                     case "NOP": linesToAdd = Compile00(operands); break;
                     case "TRM": linesToAdd = Compile01(operands); break;
+                    //we would have JMP here
 
                     case "LLR": linesToAdd = Compile10(operands); break;
                     case "LMR": linesToAdd = Compile11(operands); break;
@@ -212,10 +243,10 @@ namespace HIPC_Compiler
                     case "MRR": linesToAdd = Compile30(operands); break;
 
                     case "CMP": linesToAdd = Compile40(operands); break;
-                    case "JEQ": linesToAdd = Compile41(operands); break;
-                    case "JLT": linesToAdd = Compile42(operands); break;
-                    case "JMT": linesToAdd = Compile43(operands); break;
-                    case "JNE": linesToAdd = Compile44(operands); break;
+                    //we would have JEQ here
+                    //we would have JLT here
+                    //we would have JMT here
+                    //we would have JNE here
 
                     case "ADD": linesToAdd = Compile50(operands); break;
                     case "SUB": linesToAdd = Compile51(operands); break;
@@ -242,16 +273,12 @@ namespace HIPC_Compiler
             for (int i = 0; i < compiled.Count; i++)
             {
 
-                if (compiled[i] != "JUMPTO") continue;
+                if (compiled[i] != "JUMP") continue;
 
-                string[] linesToAdd = Compile02(new string[] { "#" + jumpDestinations[compiled[i + 1]].ToString() });
+                string address = ToBinary("#" + jumpDestinations[compiled[i + 1]], 16);
 
-                for (int j = 0; j < linesToAdd.Length; j++)
-                {
-
-                    compiled[i + j] = linesToAdd[j];
-
-                }
+                compiled[i] = address.Substring(0,8);
+                compiled[i + 1] = address.Substring(8);
 
             }
 
@@ -272,16 +299,6 @@ namespace HIPC_Compiler
         {
 
             return new string[] { "00000001" };
-
-        }
-
-        //JMP
-        static string[] Compile02(string[] opcodes)
-        {
-
-            string address = ToBinary(opcodes[0], 16);
-
-            return new string[] { "00000010", address.Substring(0, 8), address.Substring(8) };
 
         }
 
@@ -347,38 +364,6 @@ namespace HIPC_Compiler
         {
 
             return new string[] { "01000000", ToBinary(opcodes[0], 4) + ToBinary(opcodes[1], 4) };
-
-        }
-
-        //JEQ
-        static string[] Compile41(string[] opcodes)
-        {
-
-            return new string[] { "01000001", "not_impl" };
-
-        }
-
-        //JLT
-        static string[] Compile42(string[] opcodes)
-        {
-
-            return new string[] { "01000010", "not_impl" };
-
-        }
-
-        //JMT
-        static string[] Compile43(string[] opcodes)
-        {
-
-            return new string[] { "01000011", "not_impl" };
-
-        }
-
-        //JNE
-        static string[] Compile44(string[] opcodes)
-        {
-
-            return new string[] { "01000100", "not_impl" };
 
         }
 
