@@ -73,8 +73,6 @@ public class Main {
 			
 			String current = bytes[pc];
 			
-			System.out.println(pc + ": " + current);
-			
 			//NOP
 			if (current.equals("00000000")) {
 				
