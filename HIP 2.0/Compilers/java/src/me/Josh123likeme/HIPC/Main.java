@@ -120,7 +120,7 @@ public class Main {
 				
 			}
 			
-			System.out.println("succesfully compiled " + file);
+			System.out.println("succesfully compiled " + file + " (" + bytes.length + " bytes)");
 			
 		}
 			
@@ -136,6 +136,8 @@ public class Main {
         for (String line : lines)
         {
 
+        	line = line.replaceAll("\\s+", "");
+        	
             if (line.length() == 0) continue;
 
             String opcode = line.split(",")[0];
@@ -196,7 +198,7 @@ public class Main {
             //this is for jump destinations, we will store the address of the instruction to jump to here
             if (line.charAt(0) == ':')
             {
-
+            	
                 jumpDestinations.put(line.substring(1), compiled.size());
 
             }
@@ -250,7 +252,7 @@ public class Main {
         {
 
             if (compiled.get(i) != "JUMP") continue;
-
+            
             String address = toBinary("#" + jumpDestinations.get(compiled.get(i + 1)), 16);
 
             compiled.set(i, address.substring(0,8));
